@@ -1,0 +1,38 @@
+body { 
+background: white;
+}
+
+textarea {
+    width: 98%;
+}
+
+.page {
+background-color:darkgray;
+}
+
+.input_container {
+width: 50%;
+}
+
+.result_container {
+width: 50%;
+}
+
+.result_output {
+background-color:#E8E8E8;
+}
+
+.result_error {
+color:red;
+}
+
+.copyright {    
+    margin: 1em auto 0em auto;
+    color: black;
+    border-top: 1px solid black;
+    padding-top: .2em;
+    font-family: arial, sans-serif; 
+    font-size: .6em; 
+    text-align: center;
+}
+
