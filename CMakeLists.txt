@@ -7,7 +7,7 @@ project(lpeg_tester)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Parsing Expression Grammar Tester")
 set(CPACK_PACKAGE_VERSION_MAJOR 1)
 set(CPACK_PACKAGE_VERSION_MINOR 0)
-set(CPACK_PACKAGE_VERSION_PATCH 8)
+set(CPACK_PACKAGE_VERSION_PATCH 10)
 
 set(PROJECT_PATH "${CMAKE_BINARY_DIR}/${PROJECT_NAME}")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -18,12 +18,14 @@ if(CMAKE_HOST_UNIX)
   find_library(PTHREAD_LIBRARY pthread)
   find_library(NSL_LIBRARY nsl)
   find_library(OPENSSL_LIBRARY ssl)
+  find_library(CRYPTO_LIBRARY crypto)
   find_library(RT_LIBRARY rt)
   find_library(LIBZ_LIBRARY z)
   set(UNIX_LIBRARIES
   ${PTHREAD_LIBRARY}
   ${NSL_LIBRARY}
   ${OPENSSL_LIBRARY}
+  ${CRYPTO_LIBRARY}
   ${RT_LIBRARY}
   ${LIBZ_LIBRARY})
 endif()

@@ -247,9 +247,11 @@ void OutputItem(lua_State* lua, int i, Wt::WTreeNode* parent, stringstream& ss)
     break;
   case LUA_TBOOLEAN:
     if (lua_toboolean(lua, i)) {
-      parent->addChildNode(new Wt::WTreeNode("true"));
+      ss << "true";
+      parent->addChildNode(new Wt::WTreeNode(ss.str()));
     } else {
-      parent->addChildNode(new Wt::WTreeNode("false"));
+      ss << "false";
+      parent->addChildNode(new Wt::WTreeNode(ss.str()));
     }
     break;
   case LUA_TTABLE:
@@ -644,7 +646,10 @@ int main(int argc, char** argv)
     if (server.start()) {
       string uid;
       if (server.readConfigurationProperty("uid", uid)) {
-        setuid(boost::lexical_cast<int>(uid));
+        if (setuid(boost::lexical_cast<int>(uid))) {
+          Wt::log("fatal") << "Failed to setuid";
+          return EXIT_FAILURE;
+        }
       }
       int sig = Wt::WServer::waitForShutdown(argv[0]);
       Wt::log("info") << "Shutdown (signal = " << sig << ")";
