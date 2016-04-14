@@ -7,12 +7,11 @@ project(lpeg_tester)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Parsing Expression Grammar Tester")
 set(CPACK_PACKAGE_VERSION_MAJOR 1)
 set(CPACK_PACKAGE_VERSION_MINOR 0)
-set(CPACK_PACKAGE_VERSION_PATCH 10)
+set(CPACK_PACKAGE_VERSION_PATCH 12)
 
 set(PROJECT_PATH "${CMAKE_BINARY_DIR}/${PROJECT_NAME}")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(trink)
-include(externals)
 
 if(CMAKE_HOST_UNIX)
   find_library(PTHREAD_LIBRARY pthread)
@@ -30,6 +29,7 @@ if(CMAKE_HOST_UNIX)
   ${LIBZ_LIBRARY})
 endif()
 
+find_package(luasandbox 0.17.1 REQUIRED CONFIG)
 find_package(Boost 1.55.0 REQUIRED
 date_time
 filesystem
@@ -46,10 +46,10 @@ include_directories(${Wt_INCLUDE_DIR})
 include_directories("${PROJECT_PATH}/include")
 
 add_subdirectory(src)
+install(FILES ${LUA_SANDBOX_LIBRARIES} DESTINATION lib)
 install(DIRECTORY resource_bundle DESTINATION lpeg_tester)
 install(DIRECTORY resources DESTINATION lpeg_tester)
 install(DIRECTORY share DESTINATION lpeg_tester)
-install(DIRECTORY "${CMAKE_BINARY_DIR}/ep_base/Source/lua_sandbox/modules/" DESTINATION lpeg_tester/modules)
 install(FILES lpeg_tester_config.xml DESTINATION lpeg_tester)
 if(WIN32)
   install(PROGRAMS run.bat DESTINATION lpeg_tester)

@@ -4,6 +4,8 @@ background: white;
 
 textarea {
     width: 98%;
+    font-family: monospace;
+    font-size: .8em;
 }
 
 .page {

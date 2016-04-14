@@ -7,9 +7,7 @@
 /// @brief Lua Parsing Expression Grammar Tester @file
 
 #include "constants.h"
-extern "C" {
-#include "lua_sandbox.h"
-}
+#include "luasandbox.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/functional/hash.hpp>
@@ -38,12 +36,11 @@ extern "C" {
 using namespace std;
 namespace fs = boost::filesystem;
 
-static const char* kMatchFunction = "_lpeg_match";
+static const char *kMatchFunction = "_lpeg_match";
 
-class Tester : public Wt::WApplication
-{
+class Tester : public Wt::WApplication {
 public:
-  Tester(const Wt::WEnvironment& env);
+  Tester(const Wt::WEnvironment &env);
 
 private:
   Wt::WWidget* Title();
@@ -60,71 +57,76 @@ private:
   }
   void ShareGrammar();
   void LoadGrammar();
-  bool CreateGlobalMatch(lua_State* lua);
-  void Match(lua_sandbox* lsb, const string& input);
-  void Benchmark(lua_sandbox* lsb, const string& input);
+  bool CreateGlobalMatch(lua_State *lua);
+  void Match(lsb_lua_sandbox *lsb, const string &input);
+  void Benchmark(lsb_lua_sandbox *lsb, const string &input);
 
-  void HandleInternalPath(const std::string& internalPath);
+  void HandleInternalPath(const std::string &internalPath);
   void finalize();
 
-  Wt::WTextArea* mInput;
-  Wt::WTextArea* mGrammar;
-  Wt::WContainerWidget* mResult;
+  Wt::WTextArea *mInput;
+  Wt::WTextArea *mGrammar;
+  Wt::WContainerWidget *mResult;
 };
 
 
 Wt::WWidget* Tester::Title()
 {
-  Wt::WContainerWidget* container = new Wt::WContainerWidget();
+  Wt::WContainerWidget *container = new Wt::WContainerWidget();
 
   // Create a navigation bar with a link to a web page.
-  Wt::WNavigationBar* navigation = new Wt::WNavigationBar(container);
+  Wt::WNavigationBar *navigation = new Wt::WNavigationBar(container);
   navigation->setTitle("LPeg Grammar Tester", "/");
   navigation->setResponsive(true);
 
   // Setup a Left-aligned menu.
-  Wt::WMenu* leftMenu = new Wt::WMenu();
+  Wt::WMenu *leftMenu = new Wt::WMenu();
   navigation->addMenu(leftMenu);
 
-  Wt::WPopupMenu* popup = new Wt::WPopupMenu();
+  Wt::WPopupMenu *popup = new Wt::WPopupMenu();
   popup->setAutoHide(true, 250);
   popup->addItem("LPeg Documentation")->setLink(Wt::WLink("http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html"));
-  Wt::WMenuItem* item = new Wt::WMenuItem("Documentation");
+  Wt::WMenuItem *item = new Wt::WMenuItem("Documentation");
   item->setMenu(popup);
   leftMenu->addItem(item);
 
   popup = new Wt::WPopupMenu();
   popup->setAutoHide(true, 250);
 
-  Wt::WMenuItem* pi = popup->addItem("date_time");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/date_time");
-    HandleInternalPath(internalPath());
-  }));
+  Wt::WMenuItem *pi = popup->addItem("date_time");
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/date_time");
+                                      HandleInternalPath(internalPath());
+                                    }));
 
   pi = popup->addItem("common_log_format");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/clf");
-    HandleInternalPath(internalPath());
-  }));
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/clf");
+                                      HandleInternalPath(internalPath());
+                                    }));
 
   pi = popup->addItem("syslog");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/syslog");
-    HandleInternalPath(internalPath());
-  }));
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/syslog");
+                                      HandleInternalPath(internalPath());
+                                    }));
 
   pi = popup->addItem("cbufd");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/cbufd");
-    HandleInternalPath(internalPath());
-  }));
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/cbufd");
+                                      HandleInternalPath(internalPath());
+                                    }));
 
   pi = popup->addItem("mysql");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/mysql");
-    HandleInternalPath(internalPath());
-  }));
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/mysql");
+                                      HandleInternalPath(internalPath());
+                                    }));
 
   item = new Wt::WMenuItem("Modules");
   item->setMenu(popup);
@@ -135,20 +137,23 @@ Wt::WWidget* Tester::Title()
 
   pi = popup->addItem("Name-value lists");
   pi->setPathComponent("nvlist");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/nvlist");
-    HandleInternalPath(internalPath());
-  }));
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/nvlist");
+                                      HandleInternalPath(internalPath());
+                                    }));
   pi = popup->addItem("Split");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/split");
-    HandleInternalPath(internalPath());
-  }));
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/split");
+                                      HandleInternalPath(internalPath());
+                                    }));
   pi = popup->addItem("CSV");
-  pi->triggered().connect(std::bind([=]() {
-    setInternalPath("/share/csv");
-    HandleInternalPath(internalPath());
-  }));
+  pi->triggered().connect(std::bind([=]()
+                                    {
+                                      setInternalPath("/share/csv");
+                                      HandleInternalPath(internalPath());
+                                    }));
   item = new Wt::WMenuItem("Examples");
   item->setMenu(popup);
   leftMenu->addItem(item);
@@ -160,10 +165,10 @@ Wt::WWidget* Tester::Title()
 Wt::WWidget* Tester::Input()
 {
 
-  Wt::WContainerWidget* container = new Wt::WContainerWidget();
+  Wt::WContainerWidget *container = new Wt::WContainerWidget();
   container->setStyleClass("input_container");
 
-  Wt::WText* t = new Wt::WText("Input", container);
+  Wt::WText *t = new Wt::WText("Input", container);
   t->setStyleClass("area_title");
   new Wt::WBreak(container);
   mInput = new Wt::WTextArea(container);
@@ -178,7 +183,7 @@ Wt::WWidget* Tester::Input()
   mGrammar->setRows(15);
   mGrammar->setText("local l = require 'lpeg'\nl.locale(l)\ngrammar = l.C(l.digit^-4)");
 
-  Wt::WPushButton* button = new Wt::WPushButton("Test Grammar", container);
+  Wt::WPushButton *button = new Wt::WPushButton("Test Grammar", container);
   button->clicked().connect(this, &Tester::GrammarButton);
 
   button = new Wt::WPushButton("Benchmark Grammar", container);
@@ -193,10 +198,10 @@ Wt::WWidget* Tester::Input()
 
 Wt::WWidget* Tester::Result()
 {
-  Wt::WContainerWidget* c = new Wt::WContainerWidget();
+  Wt::WContainerWidget *c = new Wt::WContainerWidget();
   c->setStyleClass("result_container");
 
-  Wt::WText* t = new Wt::WText("Results", c);
+  Wt::WText *t = new Wt::WText("Results", c);
   t->setStyleClass("area_title");
 
   mResult = new Wt::WContainerWidget(c);
@@ -206,10 +211,10 @@ Wt::WWidget* Tester::Result()
 }
 
 
-void OutputItem(lua_State* lua, int i, Wt::WTreeNode* parent, stringstream& ss);
+void OutputItem(lua_State *lua, int i, Wt::WTreeNode *parent, stringstream &ss);
 
 
-void OutputTable(lua_State* lua, int i, Wt::WTreeNode* parent)
+void OutputTable(lua_State *lua, int i, Wt::WTreeNode *parent)
 {
   int result = 0;
   lua_checkstack(lua, 2);
@@ -234,7 +239,7 @@ void OutputTable(lua_State* lua, int i, Wt::WTreeNode* parent)
 }
 
 
-void OutputItem(lua_State* lua, int i, Wt::WTreeNode* parent, stringstream& ss)
+void OutputItem(lua_State *lua, int i, Wt::WTreeNode *parent, stringstream &ss)
 {
   switch (lua_type(lua, i)) {
   case LUA_TNUMBER:
@@ -257,7 +262,7 @@ void OutputItem(lua_State* lua, int i, Wt::WTreeNode* parent, stringstream& ss)
   case LUA_TTABLE:
     {
       ss << "table";
-      Wt::WTreeNode* n = new Wt::WTreeNode(ss.str());
+      Wt::WTreeNode *n = new Wt::WTreeNode(ss.str());
       n->setLoadPolicy(Wt::WTreeNode::NextLevelLoading);
       parent->addChildNode(n);
       OutputTable(lua, i, n);
@@ -272,7 +277,7 @@ void OutputItem(lua_State* lua, int i, Wt::WTreeNode* parent, stringstream& ss)
 }
 
 
-bool Tester::CreateGlobalMatch(lua_State* lua)
+bool Tester::CreateGlobalMatch(lua_State *lua)
 {
   lua_getglobal(lua, "lpeg");
   if (!lua_istable(lua, -1)) {
@@ -293,15 +298,15 @@ bool Tester::CreateGlobalMatch(lua_State* lua)
 }
 
 
-void Tester::Match(lua_sandbox* lsb, const string& input)
+void Tester::Match(lsb_lua_sandbox *lsb, const string &input)
 {
-  lua_State* lua = lsb_get_lua(lsb);
+  lua_State *lua = lsb_get_lua(lsb);
   if (!lua) return;
 
   if (!CreateGlobalMatch(lua)) {
     stringstream ss;
     ss << "lpeg.match is not available";
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     return;
@@ -310,7 +315,7 @@ void Tester::Match(lua_sandbox* lsb, const string& input)
   if (lsb_pcall_setup(lsb, kMatchFunction)) {
     stringstream ss;
     ss << "lsb_pcall_setup() failed";
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     return;
@@ -320,7 +325,7 @@ void Tester::Match(lua_sandbox* lsb, const string& input)
   if (!lua_isuserdata(lua, -1)) {
     stringstream ss;
     ss << "no global grammar variable was found";
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     return;
@@ -336,7 +341,7 @@ void Tester::Match(lua_sandbox* lsb, const string& input)
     }
     stringstream ss;
     ss << err;
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     lsb_terminate(lsb, err);
@@ -347,12 +352,12 @@ void Tester::Match(lua_sandbox* lsb, const string& input)
   if (LUA_TNIL == lua_type(lua, 1)) {
     stringstream ss;
     ss << "no match";
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
   } else {
-    Wt::WTree* tree = new Wt::WTree(mResult);
+    Wt::WTree *tree = new Wt::WTree(mResult);
     tree->setSelectionMode(Wt::SingleSelection);
-    Wt::WTreeNode* root = new Wt::WTreeNode("Returned Values");
+    Wt::WTreeNode *root = new Wt::WTreeNode("Returned Values");
     root->setStyleClass("tree_results");
     tree->setTreeRoot(root);
     root->label()->setTextFormat(Wt::PlainText);
@@ -368,16 +373,16 @@ void Tester::Match(lua_sandbox* lsb, const string& input)
 }
 
 
-void Tester::Benchmark(lua_sandbox* lsb, const string& input)
+void Tester::Benchmark(lsb_lua_sandbox *lsb, const string &input)
 {
-  lua_State* lua = lsb_get_lua(lsb);
+  lua_State *lua = lsb_get_lua(lsb);
   if (!lua) return;
   bool nomatch = false;
 
   if (!CreateGlobalMatch(lua)) {
     stringstream ss;
     ss << "lpeg.match is not available";
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     return;
@@ -389,7 +394,7 @@ void Tester::Benchmark(lua_sandbox* lsb, const string& input)
     if (lsb_pcall_setup(lsb, kMatchFunction)) {
       stringstream ss;
       ss << "lsb_pcall_setup() failed";
-      Wt::WText* t = new Wt::WText(ss.str(), mResult);
+      Wt::WText *t = new Wt::WText(ss.str(), mResult);
       t->setStyleClass("result_error");
       Wt::log("info") << ss.str();
       return;
@@ -399,7 +404,7 @@ void Tester::Benchmark(lua_sandbox* lsb, const string& input)
     if (!lua_isuserdata(lua, -1)) {
       stringstream ss;
       ss << "no global grammar variable was found";
-      Wt::WText* t = new Wt::WText(ss.str(), mResult);
+      Wt::WText *t = new Wt::WText(ss.str(), mResult);
       t->setStyleClass("result_error");
       Wt::log("info") << ss.str();
       return;
@@ -415,7 +420,7 @@ void Tester::Benchmark(lua_sandbox* lsb, const string& input)
       }
       stringstream ss;
       ss << err;
-      Wt::WText* t = new Wt::WText(ss.str(), mResult);
+      Wt::WText *t = new Wt::WText(ss.str(), mResult);
       t->setStyleClass("result_error");
       Wt::log("info") << ss.str();
       lsb_terminate(lsb, err);
@@ -429,19 +434,33 @@ void Tester::Benchmark(lua_sandbox* lsb, const string& input)
   }
   t = clock() - t;
   stringstream ss;
-  Wt::WText* txt = new Wt::WText(mResult);
+  Wt::WText *txt = new Wt::WText(mResult);
   if (nomatch) {
     txt->setStyleClass("result_error");
     ss << " *** MATCH FAILED ***<br/>";
   }
   ss << "Benchmark"
-    << "<br/>samples: " << x
-    << "<br/>seconds per match: " << (((float)t) / CLOCKS_PER_SEC / x)
-    << "<br/>max memory (bytes): " << lsb_usage(lsb, LSB_UT_MEMORY, LSB_US_MAXIMUM)
-    << "<br/>max Lua instructions: " << lsb_usage(lsb, LSB_UT_INSTRUCTION, LSB_US_MAXIMUM);
+      << "<br/>samples: " << x
+      << "<br/>seconds per match: " << (((float)t) / CLOCKS_PER_SEC / x)
+      << "<br/>max memory (bytes): " << lsb_usage(lsb, LSB_UT_MEMORY, LSB_US_MAXIMUM)
+      << "<br/>max Lua instructions: " << lsb_usage(lsb, LSB_UT_INSTRUCTION, LSB_US_MAXIMUM);
   txt->setText(ss.str());
   lsb_pcall_teardown(lsb);
 }
+
+#define SANDBOX_CFG "remove_entries = {\n\
+[''] = {'collectgarbage', 'dofile', 'load', 'loadfile', 'loadstring', 'newproxy', 'print'},\n\
+os   = {'getenv', 'execute', 'exit', 'remove', 'rename', 'setlocale', 'tmpname'},\n\
+string = {'dump'}}\n\
+disabled_modules = {io = 1, coroutine = 1}\n\
+log_level = 7\n\
+path = '/usr/lib/luasandbox/modules/?.lua'\n\
+cpath = '/usr/lib/luasandbox/modules/?"
+#ifdef WIN32
+#define SHARED_LIB_EXT ".dll"
+#else
+#define SHARED_LIB_EXT ".so"
+#endif
 
 
 void Tester::TestGrammar(bool benchmark)
@@ -456,17 +475,18 @@ void Tester::TestGrammar(bool benchmark)
   } else {
     stringstream ss;
     ss << "failed to open: " << grammar;
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("error") << ss.str();
     return;
   }
-  lua_sandbox* sb = lsb_create(NULL, grammar.string().c_str(), "modules",
-                               8*1024*1024, 1e6, 1024*63);
+  lsb_lua_sandbox *sb = lsb_create(NULL, grammar.string().c_str(),
+                                   SANDBOX_CFG SHARED_LIB_EXT "'\n",
+                                   NULL);
   if (!sb) {
     stringstream ss;
     ss << "lsb_create() failed";
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("error") << ss.str();
     return;
@@ -480,7 +500,7 @@ void Tester::TestGrammar(bool benchmark)
     } else {
       ss << error;
     }
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     return;
@@ -491,11 +511,11 @@ void Tester::TestGrammar(bool benchmark)
   } else {
     Match(sb, mInput->text().narrow());
   }
-  char* e = lsb_destroy(sb, nullptr);
+  char *e = lsb_destroy(sb);
   if (e) {
     stringstream ss;
     ss << "lsb_destroy() failed: " << e;
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     free(e);
@@ -517,7 +537,7 @@ void Tester::ShareGrammar()
     } else {
       stringstream ss;
       ss << "failed to open: " << input;
-      Wt::WText* t = new Wt::WText(ss.str(), mResult);
+      Wt::WText *t = new Wt::WText(ss.str(), mResult);
       t->setStyleClass("result_error");
       Wt::log("error") << ss.str();
       return;
@@ -531,7 +551,7 @@ void Tester::ShareGrammar()
     } else {
       stringstream ss;
       ss << "failed to open: " << grammar;
-      Wt::WText* t = new Wt::WText(ss.str(), mResult);
+      Wt::WText *t = new Wt::WText(ss.str(), mResult);
       t->setStyleClass("result_error");
       Wt::log("error") << ss.str();
       return;
@@ -539,10 +559,11 @@ void Tester::ShareGrammar()
   }
 
   setInternalPath("/share/" + h);
-  Wt::WMessageBox* messageBox = new Wt::WMessageBox("Share", makeAbsoluteUrl(bookmarkUrl()), Wt::Information, Wt::Ok);
-  messageBox->buttonClicked().connect(std::bind([=]() {
-    delete messageBox;
-  }));
+  Wt::WMessageBox *messageBox = new Wt::WMessageBox("Share", makeAbsoluteUrl(bookmarkUrl()), Wt::Information, Wt::Ok);
+  messageBox->buttonClicked().connect(std::bind([=]()
+                                                {
+                                                  delete messageBox;
+                                                }));
   messageBox->show();
 }
 
@@ -564,7 +585,7 @@ void Tester::LoadGrammar()
   } else {
     stringstream ss;
     ss << "share not found: " << h;
-    Wt::WText* t = new Wt::WText(ss.str(), mResult);
+    Wt::WText *t = new Wt::WText(ss.str(), mResult);
     t->setStyleClass("result_error");
     Wt::log("info") << ss.str();
     return;
@@ -581,7 +602,7 @@ void Tester::LoadGrammar()
 }
 
 
-void Tester::HandleInternalPath(const std::string& internalPath)
+void Tester::HandleInternalPath(const std::string &internalPath)
 {
   if (internalPathMatches("/share")) {
     LoadGrammar();
@@ -593,22 +614,22 @@ void Tester::HandleInternalPath(const std::string& internalPath)
 }
 
 
-Tester::Tester(const Wt::WEnvironment& env)
-  : Wt::WApplication(env)
+Tester::Tester(const Wt::WEnvironment &env)
+    : Wt::WApplication(env)
 {
 
   setTheme(new Wt::WBootstrapTheme());
   useStyleSheet("resources/lpeg_tester.css");
 
-  Wt::WContainerWidget* container = new Wt::WContainerWidget();
+  Wt::WContainerWidget *container = new Wt::WContainerWidget();
   container->setStyleClass("page");
 
-  Wt::WVBoxLayout* vbox = new Wt::WVBoxLayout();
+  Wt::WVBoxLayout *vbox = new Wt::WVBoxLayout();
   container->setLayout(vbox);
 
   vbox->addWidget(Title(), 1);
 
-  Wt::WHBoxLayout* hbox = new Wt::WHBoxLayout();
+  Wt::WHBoxLayout *hbox = new Wt::WHBoxLayout();
   vbox->addLayout(hbox);
 
   hbox->addWidget(Input(), 1);
@@ -630,13 +651,13 @@ void Tester::finalize()
 }
 
 
-Wt::WApplication* CreateApplication(const Wt::WEnvironment& aEnv)
+Wt::WApplication* CreateApplication(const Wt::WEnvironment &aEnv)
 {
   return new Tester(aEnv);
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   try {
     Wt::WServer server(argv[0], trink::lpeg_tester::kWtConfig);
@@ -658,12 +679,10 @@ int main(int argc, char** argv)
       Wt::log("fatal") << "Failed to start the user interface";
       return EXIT_FAILURE;
     }
-  }
-  catch (const exception& e) {
+  } catch (const exception &e) {
     Wt::log("fatal") << "std exception: " << e.what();
     return EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     Wt::log("fatal") << "unknown exception";
     return EXIT_FAILURE;
   }
