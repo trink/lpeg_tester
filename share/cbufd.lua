@@ -1,2 +1,2 @@
-local cbufd = require 'cbufd'
+local cbufd = require 'lpeg.cbufd'
 grammar = cbufd.grammar

@@ -7,7 +7,7 @@ project(lpeg_tester)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lua Parsing Expression Grammar Tester")
 set(CPACK_PACKAGE_VERSION_MAJOR 1)
 set(CPACK_PACKAGE_VERSION_MINOR 0)
-set(CPACK_PACKAGE_VERSION_PATCH 12)
+set(CPACK_PACKAGE_VERSION_PATCH 13)
 
 set(PROJECT_PATH "${CMAKE_BINARY_DIR}/${PROJECT_NAME}")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -29,7 +29,7 @@ if(CMAKE_HOST_UNIX)
   ${LIBZ_LIBRARY})
 endif()
 
-find_package(luasandbox 0.17.1 REQUIRED CONFIG)
+find_package(luasandbox 0.20.0 REQUIRED CONFIG)
 find_package(Boost 1.55.0 REQUIRED
 date_time
 filesystem
