@@ -7,12 +7,12 @@
 /// @brief Lua Parsing Expression Grammar Tester @file
 
 #include "constants.h"
-#include "luasandbox.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/lexical_cast.hpp>
-#include <lauxlib.h>
+#include <luasandbox.h>
+#include <luasandbox/lauxlib.h>
 #include <Wt/WApplication>
 #include <Wt/WBootstrapTheme>
 #include <Wt/WBreak>
