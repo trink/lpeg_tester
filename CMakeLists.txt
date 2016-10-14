@@ -29,7 +29,7 @@ if(CMAKE_HOST_UNIX)
   ${LIBZ_LIBRARY})
 endif()
 
-find_package(luasandbox 0.20.0 REQUIRED CONFIG)
+find_package(luasandbox 1.2.0 REQUIRED CONFIG)
 find_package(Boost 1.55.0 REQUIRED
 date_time
 filesystem
