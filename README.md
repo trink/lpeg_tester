@@ -1,3 +1,7 @@
+Demo
+====
+https://lpeg.trink.com
+
 Prerequisites {#mainpage}
 ====
 * Clang 3.1 or GCC 4.7+ or Visual Studio 10
